@@ -1,0 +1,12 @@
+{
+	"parametersX": [{
+		"car": "SPXXXX",
+		"year": 2024,
+		"valid": false
+	},
+	{
+		"car": "CSYYYYY",
+		"year": 2019,
+		"festive": "No"
+	}]
+}
