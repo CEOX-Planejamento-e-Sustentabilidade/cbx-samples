@@ -1,0 +1,79 @@
+{
+	"request_id": "d0baca4b-640c-4150-a2fe-bfaf0688a103",
+	"status": "finished",
+	"message": "",
+	"client_name": "Diogo Francisco Martins Guerreiro",
+	"token_name": "Diogo Francisco Martins Guerreiro",
+	"api_version": "v2",
+	"service": "car/demonstrativo",
+	"time_limit": "2024-03-07T17:42:36.000-03:00",
+	"timeout": 86400,
+	"callback_url": "https://cbx-webhook-api-7a32073b70f6.herokuapp.com/car/demonstration/infosimples",
+	"context": "b'Y3JlYXRlZGJ5PTE7dXBkYXRlZGJ5PTE7dHJhbnNhY3Rpb25pZD02NzMxNzUwNC1mNDk5LTQ3YjQtYjI0MS02OGQwZjQ3YWQ5MGY='",
+	"parameters": {
+		"car": "MG3147907A91BD100C9A34D90AA7C7D12D94DE6A4"
+	},
+	"requested_at": "2024-03-06T17:42:36.000-03:00",
+	"finished_at": "2024-03-06T17:43:51.000-03:00",
+	"response": {
+		"code": 200,
+		"code_message": "A requisição foi processada com sucesso.",
+		"header": {
+			"api_version": "v2",
+			"api_version_full": "2.2.16-20240306171423",
+			"product": "Consultas",
+			"service": "car/demonstrativo",
+			"parameters": {
+				"car": "MG3147907A91BD100C9A34D90AA7C7D12D94DE6A4"
+			},
+			"client_name": "Diogo Francisco Martins Guerreiro",
+			"token_name": "Diogo Francisco Martins Guerreiro",
+			"billable": true,
+			"price": "0.24",
+			"requested_at": "2024-03-06T17:43:51.000-03:00",
+			"elapsed_time_in_milliseconds": 2656,
+			"remote_ip": "177.83.132.3",
+			"signature": "U2FsdGVkX18jhnIJgjdMj+k6oEX5Pg1sM079qQ9C2wsF9qlWaO7FM5ARfIpFC3+yaMCg10034HCl3FV+bSpu+Q=="
+		},
+		"data_count": 1,
+		"data": [
+			{
+				"area_preservacao_permanente": 13.301802358976,
+				"area_uso_restrito": 0.0,
+				"car": "MG-3147907-A91BD100C9A34D90AA7C7D12D94DE6A4",
+				"condicao_cadastro": "Cancelado por decisão administrativa",
+				"imovel": {
+					"area": 133.9298,
+					"modulos_fiscais": 5.1511,
+					"endereco_municipio": "Passos",
+					"endereco_uf": "MG",
+					"endereco_latitude": "20°29'59,2\" S",
+					"endereco_longitude": "46°45'32,69\" O",
+					"registro_data": "28/05/2014",
+					"analise_data": null,
+					"retificacao_data": "08/06/2022"
+				},
+				"reserva": {
+					"situacao": "Não Analisada",
+					"justificativa": null,
+					"area_averbada": 0.0,
+					"area_nao_averbada": 0.0,
+					"area_legal_proposta": 1.5366,
+					"area_legal_declarada": 1.5366
+				},
+				"restricoes": [],
+				"situacao": "Cancelado",
+				"solo": {
+					"area_nativa": 2.95622188955288,
+					"area_uso": 130.719319239691,
+					"area_servidao_administrativa": 0.000025563510421992
+				},
+				"site_receipt": "https://storage.googleapis.com/infosimples-api-tmp/api/car/demonstrativo/20240306174351/EMe3XMRbXKqXUteVy3uqc3lIgoEfg40R/b8fe4ee8ed6a4a6580787c3d2d012478_0_QA0.html"
+			}
+		],
+		"errors": [],
+		"site_receipts": [
+			"https://storage.googleapis.com/infosimples-api-tmp/api/car/demonstrativo/20240306174351/EMe3XMRbXKqXUteVy3uqc3lIgoEfg40R/b8fe4ee8ed6a4a6580787c3d2d012478_0_QA0.html"
+		]
+	}
+}
