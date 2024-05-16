@@ -15,9 +15,9 @@ try:
     json1 = apply(dict2, diff1_rev)
     
     print(to_json(diff1, indent=4))
+    print("--------------------------------------------------------------")
     print(to_json(diff1_rev, indent=4))
-    #print(json1)
-    #print(json1)
+    print("--------------------------------------------------------------")
     
 except Exception as ex:
     print(ex)
