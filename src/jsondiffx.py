@@ -34,8 +34,19 @@ try:
     diff4, diff4_rev = diff(dict4, dict5)
     diff5, diff5_rev = diff(dict5, dict6)
     
-    ff = to_json(diff1_rev)
-    print(ff)
+    json5 = apply(dict6, diff5_rev)
+    json4 = apply(json5, diff4_rev)
+    json3 = apply(json4, diff3_rev)
+    json2 = apply(json3, diff2_rev)
+    json1 = apply(json2, diff1_rev)
+    
+    print(json5)
+    print(json4)
+    print(json5)
+    print(json2)
+    print(json1)
+    
+    
     
     print('last json: ', json.dumps(dict6, indent=4))
     print("--------------------------------------------------------------")
