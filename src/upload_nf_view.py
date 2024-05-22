@@ -38,7 +38,7 @@ def process_chunk(offset, chunk_size):
     cur = conn.cursor()
     
     query = f"""
-        SELECT content_json, id,  
+        SELECT content_json, key_nf,  
         ie_emissor, ie_destinatario, cnpj_cpf_emissor, cnpj_cpf_destinatario, 
         razao_social_emissor, razao_social_destinatario, client_id
         FROM cbx.nf ORDER BY id LIMIT {chunk_size} OFFSET {offset}
@@ -50,7 +50,7 @@ def process_chunk(offset, chunk_size):
     data = []
     for row in rows:
         json_data = row[0]
-        id_value = row[1]        
+        key_nf = row[1]        
         ie_emissor = row[2]
         ie_dest = row[3]
         cpf_emissor = row[4]
@@ -70,7 +70,7 @@ def process_chunk(offset, chunk_size):
                     prod = prod_list['prod']                   
                     
                     flat_det = {
-                        'id_nf': id_value, #integer,
+                        'key_nf': key_nf,
                         'nro_nota': ide['nNF'], #integer,
                         'tipo_nota': ide['tpNF'], #integer,
                         'data_emissao': ide['dhEmi'], #timestamp(0) without time zone,	
@@ -93,7 +93,7 @@ def process_chunk(offset, chunk_size):
                         prod = item.get('prod', {})
                         
                         flat_det = {
-                            'id_nf': id_value, #integer,
+                            'key_nf': key_nf,
                             'nro_nota': ide['nNF'], #integer,
                             'tipo_nota': ide['tpNF'], #integer,
                             'data_emissao': ide['dhEmi'], #timestamp(0) without time zone,	
@@ -136,7 +136,7 @@ def main():
     
     #xx = process_chunk(0, chunk_size)
     
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    with ThreadPoolExecutor(max_workers=1) as executor:
         futures = [executor.submit(process_chunk, offset, chunk_size) for offset in offsets]
 
         for future in as_completed(futures):
@@ -145,7 +145,7 @@ def main():
                 try:
                     insert_into_db(engine, df)
                 except Exception as ex:
-                    print(f'Error inserting chunk: idnf: {df["id_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
+                    print(f'Error inserting chunk: key-nf: {df["key_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
         
         print('---------------------')
         print('NFs inseridas na VIEW')
