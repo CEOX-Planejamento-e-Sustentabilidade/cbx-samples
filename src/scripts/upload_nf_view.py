@@ -1,8 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import psycopg2
 import pandas as pd
-import json
-from pandas import json_normalize
 from sqlalchemy import create_engine
 
 def connect_to_db():
@@ -17,20 +15,6 @@ def connect_to_db():
 def get_total_rows(cur):
     cur.execute("SELECT COUNT(*) FROM cbx.nf")
     return cur.fetchone()[0]
-
-# Function to extract and normalize the 'det' array from the JSON data
-# def extract_and_normalize(id, json_data):
-#     if 'nfeProc' not in json_data or 'NFe' not in json_data['nfeProc'] or 'infNFe' not in json_data['nfeProc']['NFe']:
-#         return pd.DataFrame()  # Return an empty DataFrame if 'nfeProc' node doesn't exist
-        
-#     det_data = json_normalize(json_data['nfeProc']['NFe']['infNFe']['det'])
-#     ide_data = json_normalize(json_data['nfeProc']['NFe']['infNFe']['ide'])
-#     ide_data = pd.concat([ide_data] * len(det_data)).reset_index(drop=True)
-#     result_df = pd.concat([det_data, ide_data], axis=1)
-    
-#     # Add the ID column to the result DataFrame
-#     result_df['id'] = id
-#     return result_df
 
 # Function to process data in chunks
 def process_chunk(offset, chunk_size):
@@ -154,3 +138,18 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    
+# Function to extract and normalize the 'det' array from the JSON data
+# def extract_and_normalize(id, json_data):
+#     if 'nfeProc' not in json_data or 'NFe' not in json_data['nfeProc'] or 'infNFe' not in json_data['nfeProc']['NFe']:
+#         return pd.DataFrame()  # Return an empty DataFrame if 'nfeProc' node doesn't exist
+        
+#     det_data = json_normalize(json_data['nfeProc']['NFe']['infNFe']['det'])
+#     ide_data = json_normalize(json_data['nfeProc']['NFe']['infNFe']['ide'])
+#     ide_data = pd.concat([ide_data] * len(det_data)).reset_index(drop=True)
+#     result_df = pd.concat([det_data, ide_data], axis=1)
+    
+#     # Add the ID column to the result DataFrame
+#     result_df['id'] = id
+#     return result_df
