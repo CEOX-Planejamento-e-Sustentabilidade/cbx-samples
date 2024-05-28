@@ -4,12 +4,26 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def connect_to_db():
+    # PG_USER = "postgres"
+    # PG_PASSWORD = "84iuPbpQnCF5vze"
+    # PG_DATABASE = "cbx_prd"
+    # PG_HOST = "plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com"
+    # PG_PORT = 5432
+    
+    # conn = psycopg2.connect(
+    #     host="localhost",
+    #     database="cbx_dev",
+    #     user="postgres",
+    #     password="local123"
+    # )
+    
     conn = psycopg2.connect(
-        host="localhost",
-        database="cbx_dev",
+        host="plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com",
+        database="cbx_prd",
         user="postgres",
-        password="local123"
+        password="84iuPbpQnCF5vze"
     )
+    
     return conn
 
 def get_total_rows(cur):
@@ -108,7 +122,8 @@ def main():
     conn = connect_to_db()
     cur = conn.cursor()
     
-    conn_str = "postgresql://postgres:local123@localhost:5432/cbx_dev"
+    #conn_str = "postgresql://postgres:local123@localhost:5432/cbx_dev"
+    conn_str = "postgresql://postgres:84iuPbpQnCF5vze@plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com:5432/cbx_prd"
     engine = create_engine(conn_str)
 
     total_rows = get_total_rows(cur)

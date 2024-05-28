@@ -93,12 +93,18 @@ def get_ies():
         return df_subset
     
 def connect_to_db():
+    # conn = psycopg2.connect(
+    #     host="localhost",
+    #     database="cbx_dev",
+    #     user="postgres",
+    #     password="local123"
+    # )
     conn = psycopg2.connect(
-        host="localhost",
-        database="cbx_dev",
+        host="plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com",
+        database="cbx_prd",
         user="postgres",
-        password="local123"
-    )
+        password="84iuPbpQnCF5vze"
+    )    
     return conn
 
 
