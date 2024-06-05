@@ -126,6 +126,7 @@ def main():
     except Exception as ex:            
         print(f'erro: {ex}')
         return
+    # mssql+pyodbc://
     
     conn = connect_to_db()    
     cur = conn.cursor()

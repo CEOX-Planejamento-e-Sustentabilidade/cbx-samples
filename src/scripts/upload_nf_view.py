@@ -135,20 +135,31 @@ def main():
     
     #xx = process_chunk(0, chunk_size)
     
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        futures = [executor.submit(process_chunk, offset, chunk_size) for offset in offsets]
-
-        for future in as_completed(futures):
-            df = future.result()
-            if df is not None and not df.empty:
-                try:
-                    insert_into_db(engine, df)
-                except Exception as ex:
-                    print(f'Error inserting chunk: key-nf: {df["key_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
-        
+    for offset in offsets:
+        df = process_chunk(offset, chunk_size)
+        try:
+            insert_into_db(engine, df)
+        except Exception as ex:
+            print(f'Error inserting chunk: key-nf: {df["key_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
         print('---------------------')
         print('NFs inseridas na VIEW')
         print('---------------------')
+
+    
+    # with ThreadPoolExecutor(max_workers=1) as executor:
+    #     futures = [executor.submit(process_chunk, offset, chunk_size) for offset in offsets]
+
+    #     for future in as_completed(futures):
+    #         df = future.result()
+    #         if df is not None and not df.empty:
+    #             try:
+    #                 insert_into_db(engine, df)
+    #             except Exception as ex:
+    #                 print(f'Error inserting chunk: key-nf: {df["key_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
+        
+    #     print('---------------------')
+    #     print('NFs inseridas na VIEW')
+    #     print('---------------------')
                 
 
 if __name__ == "__main__":
