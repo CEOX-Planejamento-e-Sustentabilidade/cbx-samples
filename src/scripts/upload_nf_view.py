@@ -141,9 +141,9 @@ def main():
             insert_into_db(engine, df)
         except Exception as ex:
             print(f'Error inserting chunk: key-nf: {df["key_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
-        print('---------------------')
-        print('NFs inseridas na VIEW')
-        print('---------------------')
+    print('---------------------')
+    print('NFs inseridas na VIEW')
+    print('---------------------')
 
     
     # with ThreadPoolExecutor(max_workers=1) as executor:
