@@ -3,14 +3,18 @@ import json
 
 url = 'https://api.infosimples.com/api/v2/consultas/car/demonstrativo'
 args = {
-  "car":     "GO5203302DC680D0AD270487E9B97708906C9697D",
+  "car":     "RJ-3301009-C7EB51D58BCD4D60A5D45815C9111588",
   "token":   "NuUBrhgD5v4nIWfb4bgrmXNwg7AALulkSq-BsYk3",
   "timeout": 300
 }
 
-response = requests.post(url, args)
-response_json = response.json()
-response.close()
+try:
+  response = requests.post(url, args)
+  response_json = response.json()
+  response.close()
+except Exception as ex:
+  print(ex)
+
 
 # if response_json['code'] == 200:
 #   print("Retorno com sucesso: ", response_json['data'])
