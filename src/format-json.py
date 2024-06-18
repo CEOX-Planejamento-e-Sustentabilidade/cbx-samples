@@ -20,22 +20,7 @@ id_sources = [str(item["id_source"]) for item in sources_result]
 joined_sources = ', '.join(id_sources)
 print("sources: "+ joined_sources)
 
-# result = []
-# for id_source in id_sources:
-#     fonte = next((f for f in fontes if f["id"] == id_source), None)["name"] if fonte else None
-#     if fonte:
-#         result.append(fonte["name"])
-# joined_result = ', '.join(result)
-# print(joined_result)
-
 print([fonte["name"] for fonte in fontes if fonte["id"] == 5][0])
 
-#print([str(item["id_source"]) for item in sources_result])
 print(', '.join([next((f for f in fontes if f["id"] == item["id_source"]), None)["name"] for item in sources_result]))
-
-
-
-#result_id_5 = [fonte["name"] for fonte in fontes if fonte["id"] == 5][0]
-#print(result_id_5)
-
 

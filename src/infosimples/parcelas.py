@@ -12,6 +12,25 @@
 
 import requests
 import json
+import jwt
+
+SECRET_KEY = 'xsgdfytgdfjhdfjfikgfjfnjfjkdfprt90435i950r*/dffdgk59ejej4$%gf89443%%34534345$&^&%^*&%^gfdlkgmsdfjhjsd`121`2232131'
+token = jwt.encode({'username': 'edmar'}, SECRET_KEY, algorithm='HS256')
+print(token)
+payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+print(payload)
+# Extract the user's identity from the payload
+username = payload['username']
+print(username)
+
+response_json = {
+  'code': 600,
+  'code_message': 'Erro no retorno da consulta.',
+  'errors': ['Os dados não foram recebidos corretamente. Entre em contato com www.suporte.com.br', 'Erro no server']
+  }
+msg = "Código: {} - {}\n".format(response_json['code'], response_json['code_message'])
+msg += "\n".join([f"Erro {index + 1}: {error}" for index, error in enumerate(response_json['errors'])])
+print(msg)
 
 url = 'https://api.infosimples.com/api/v2/consultas/incra/sigef/parcelas'
 args = {
@@ -23,18 +42,6 @@ args = {
   "codigo_imovel": "6270200045610",
   "token": "NuUBrhgD5v4nIWfb4bgrmXNwg7AALulkSq-BsYk3"
 }
-
-  # "cpf":           "VALOR_DO_PARAMETRO_CPF",
-  # "cnpj":          "VALOR_DO_PARAMETRO_CNPJ",
-  # "codigo_imovel": "VALOR_DO_PARAMETRO_CODIGO_IMOVEL",
-  # "pagina":        "VALOR_DO_PARAMETRO_PAGINA",
-  # "login_cpf":     "VALOR_DO_PARAMETRO_LOGIN_CPF",
-  # "login_senha":   "VALOR_DO_PARAMETRO_LOGIN_SENHA",
-  # #"pkcs12_cert":   aes256.encrypt(base64.b64encode(open("certificado.pfx", "rb").read()).decode(), "INFORME_A_CHAVE_DE_CRIPTOGRAFIA"),
-  # #"pkcs12_pass":   aes256.encrypt("SENHA_DO_CERTIFICADO", "INFORME_A_CHAVE_DE_CRIPTOGRAFIA"),
-  # "token":         "INFORME_AQUI_O_TOKEN_DA_CHAVE_DE_ACESSO",
-  # "timeout":       300
-
 
 response = requests.post(url, args)
 response_json = response.json()

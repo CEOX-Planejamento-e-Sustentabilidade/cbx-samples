@@ -9,21 +9,21 @@ from datetime import datetime
 
 def format_person_doc(doc: str):
     # remove dots and hyphens
-    new_doc = ''.join(filter(str.isdigit, str(doc))) #re.sub(r'\..*', '', str(doc)) if pd.notna(doc) and str(doc).strip() != '' else doc
+    new_doc = ''.join(filter(str.isdigit, doc)) #re.sub(r'\..*', '', str(doc)) if pd.notna(doc) and str(doc).strip() != '' else doc
     return new_doc
         
 def verify_cpf_cnpj(doc: str):
     #number = ''.join(filter(str.isdigit, number))  # Remove non-digit characters    
     doc = format_person_doc(doc)  # Remove non-digit characters    
-    if len(doc) == 11:
+    if len(doc) <= 11:
         return "CPF"
-    elif len(doc) == 14:
+    elif len(doc) > 11 and len(doc) <= 14:
         return "CNPJ"
     else:
         return "Invalid"
     
 def get_ies():
-    with pd.ExcelFile('src/scripts/ies_cadastrar.xlsx', engine='openpyxl') as xls:
+    with pd.ExcelFile('src/scripts/ies_cadastrar.xlsx', engine='openpyxl', dtype={'cpf_cnpj': str}) as xls:
         df = pd.read_excel(xls, dtype={'ie': str})
         
         #EXCEL: id_grupo|produtor|cpf_cnpj|ie|situacao_ie|municipio|nome_fantasia|logradouro|no|complemento|cep|bairro|data_inicio_atividade|data_situacao_cadastral|nome_empresarial|descricao_atividade|
