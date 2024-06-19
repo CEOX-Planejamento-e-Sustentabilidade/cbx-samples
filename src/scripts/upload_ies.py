@@ -23,7 +23,7 @@ def verify_cpf_cnpj(doc: str):
         return "Invalid"
     
 def get_ies():
-    with pd.ExcelFile('src/scripts/ies_cadastrar.xlsx', engine='openpyxl', dtype={'cpf_cnpj': str}) as xls:
+    with pd.ExcelFile('src/scripts/ie/ies_cadastrar.xlsx', engine='openpyxl', dtype={'cpf_cnpj': str}) as xls:
         df = pd.read_excel(xls, dtype={'ie': str})
         
         #EXCEL: id_grupo|produtor|cpf_cnpj|ie|situacao_ie|municipio|nome_fantasia|logradouro|no|complemento|cep|bairro|data_inicio_atividade|data_situacao_cadastral|nome_empresarial|descricao_atividade|
