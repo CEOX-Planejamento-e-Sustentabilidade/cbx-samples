@@ -27,18 +27,15 @@ def connect_to_db():
 
 def format_person_doc(doc: str):
     # remove dots and hyphens
-    new_doc = ''.join(filter(str.isdigit, str(doc))) #re.sub(r'\..*', '', str(doc)) if pd.notna(doc) and str(doc).strip() != '' else doc
+    new_doc = ''.join(filter(str.isdigit, str(doc)))
     return new_doc
         
 def verify_cpf_cnpj(doc: str):
-    #number = ''.join(filter(str.isdigit, number))  # Remove non-digit characters    
-    doc = format_person_doc(doc)  # Remove non-digit characters    
-    if len(doc) == 11:
+    doc = format_person_doc(doc)
+    if len(doc) <= 11:
         return "CPF"
-    elif len(doc) == 14:
+    elif len(doc) > 11:
         return "CNPJ"
-    else:
-        return "Invalid"
     
 def get_dbfs():
     # src/scripts/dbf
@@ -91,13 +88,13 @@ def get_dbfs():
         }                
         df.rename(columns=columns_to_be, inplace=True)
         df.columns = map(str.lower, df.columns)
+        df['cpf_cnpj'] = df.apply(lambda row: format_person_doc(row.cpf_cnpj), axis=1)
         df['cod_grupo'] = df.apply(lambda row: int(row.cod_grupo), axis=1)
         df['data_registro'] = df.apply(lambda x: pd.to_datetime(x).strftime('%Y-%m-%d %H:%M:%S') if pd.notnull(x['data_registro']) and isinstance(x['data_registro'], str) else x['data_registro'], axis=1)
         df['created_at'] = datetime.now().isoformat()
         df['updated_at'] = datetime.now().isoformat()
         df['created_by'] = 139
-        df['updated_by'] = 139
-        df['cpf_cnpj'] = df.apply(lambda row: format_person_doc(row.cpf_cnpj), axis=1)
+        df['updated_by'] = 139        
         return df
 
     except Exception as ex:
