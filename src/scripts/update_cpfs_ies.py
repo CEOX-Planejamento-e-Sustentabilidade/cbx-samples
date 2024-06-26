@@ -1,11 +1,8 @@
-import math
-import re
 import pandas as pd 
 import json
-import psycopg2
 
-from sqlalchemy import create_engine
-from datetime import datetime
+from util_database import *
+from util_format import *
 
 # Update IEs 
 # 1 - cpf_cnpj remove characters '.0' at the final of the value
@@ -14,64 +11,16 @@ from datetime import datetime
 # 4 - read the ies from the file and update client of it to CBX
 # 5 - some cnpj are on the cpf field, need to swap them
 
-def format_person_doc(doc: str):
-    # ex.: "13577891815.0" - remove .0
-    if doc.endswith(".0"):
-        doc = doc[:-2] 
-    # remove dots and hyphens
-    new_doc = ''.join(filter(str.isdigit, doc)) #re.sub(r'\..*', '', str(doc)) if pd.notna(doc) and str(doc).strip() != '' else doc
-    return new_doc
-
-def need_update_doc(doc: str):
-    special_characters = ['.', '/', '-']
-    return doc.endswith(".0") or any(char in doc for char in special_characters)
-
-def has_11(doc: str):
-    doc = format_person_doc(doc)
-    return len(doc) == 11
-
-def has_14(doc: str):
-    doc = format_person_doc(doc)
-    return len(doc) == 14
-
-def format_zero_left(doc: str):
-    doc = format_person_doc(doc)
-    if len(doc) < 11:        
-        return doc.zfill(11)
-    elif len(doc) > 11 and len(doc) < 14:
-        return doc.zfill(14)
-    return doc
-        
-def verify_cpf_cnpj(doc: str):
-    doc = format_zero_left(doc) 
-    if len(doc) <= 11:
-        return "CPF"
-    elif len(doc) > 11: #and len(doc) <= 14:
-        return "CNPJ"
-    #else:
-    #    return "Invalid"
+# def format_person_doc(doc: str):
+#     # ex.: "13577891815.0" - remove .0
+#     if doc.endswith(".0"):
+#         doc = doc[:-2] 
+#     # remove dots and hyphens
+#     new_doc = ''.join(filter(str.isdigit, doc)) #re.sub(r'\..*', '', str(doc)) if pd.notna(doc) and str(doc).strip() != '' else doc
+#     return new_doc
        
-def connect_to_db():
-    # conn = psycopg2.connect(
-    #     host="localhost",
-    #     database="cbx_dev",
-    #     user="postgres",
-    #     password="local123"
-    # )
-    conn = psycopg2.connect(
-        host="plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com",
-        database="cbx_prd",
-        user="postgres",
-        password="84iuPbpQnCF5vze"
-    )    
-    return conn
-
-def get_total_rows(cur):
-    cur.execute("SELECT COUNT(*) FROM cbx.ie")
-    return cur.fetchone()[0]
-
 def process_chunk(offset, chunk_size):
-    conn = connect_to_db()
+    conn = connect_to_db(prod=False)
     cur = conn.cursor()
     
     query = f"""
@@ -105,7 +54,7 @@ def update_cpf_cnpj(conn):
         cur = conn.cursor()
         #engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
                 
-        total_rows = get_total_rows(cur)
+        total_rows = get_total_rows(cur, 'cbx.ie')
         chunk_size = 500
         offsets = range(0, total_rows, chunk_size)
                 
@@ -190,10 +139,10 @@ def update_client(conn):
         
     
 def main():   
-    conn = connect_to_db()
+    conn = connect_to_db(prod=False)
     update_cpf_cnpj(conn)
-    conn = connect_to_db()
+    conn = connect_to_db(prod=False)
     update_client(conn)
     
 if __name__ == "__main__":
-    main()    
+    main()

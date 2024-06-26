@@ -1,27 +1,12 @@
 import math
-import re
 import pandas as pd 
 import json
-import psycopg2
 
 from sqlalchemy import create_engine
 from datetime import datetime
-
-def format_person_doc(doc: str):
-    # remove dots and hyphens
-    new_doc = ''.join(filter(str.isdigit, doc)) #re.sub(r'\..*', '', str(doc)) if pd.notna(doc) and str(doc).strip() != '' else doc
-    return new_doc
-        
-def verify_cpf_cnpj(doc: str):
-    #number = ''.join(filter(str.isdigit, number))  # Remove non-digit characters    
-    doc = format_person_doc(doc)  # Remove non-digit characters    
-    if len(doc) <= 11:
-        return "CPF"
-    elif len(doc) > 11 and len(doc) <= 14:
-        return "CNPJ"
-    else:
-        return "Invalid"
-    
+from util_database import *
+from util_format import *
+   
 def get_ies():
     with pd.ExcelFile('src/scripts/ie/ies_cadastrar.xlsx', engine='openpyxl', dtype={'cpf_cnpj': str}) as xls:
         df = pd.read_excel(xls, dtype={'ie': str})
@@ -92,22 +77,6 @@ def get_ies():
                 
         return df_subset
     
-def connect_to_db():
-    # conn = psycopg2.connect(
-    #     host="localhost",
-    #     database="cbx_dev",
-    #     user="postgres",
-    #     password="local123"
-    # )
-    conn = psycopg2.connect(
-        host="plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com",
-        database="cbx_prd",
-        user="postgres",
-        password="84iuPbpQnCF5vze"
-    )    
-    return conn
-
-
 def get_update_sql(field_name, field_value, ie):    
     # Define the SQL statement as a string
     sql_statement = """
@@ -128,7 +97,7 @@ def main():
         return
     # mssql+pyodbc://
     
-    conn = connect_to_db()    
+    conn = connect_to_db(prod=False)    
     cur = conn.cursor()
     engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)    
         
