@@ -76,6 +76,7 @@ def main():
         return
     
     conn = connect_to_db(prod=False)
+    cur = conn.cursor()
     engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)    
         
     chunksize = 1
@@ -87,11 +88,47 @@ def main():
             #chunk.to_sql('shapefile', engine, schema='cbx', if_exists='append', index=False)
         except Exception as ex:            
             print(f'erro: {ex.args}')
+    
+    try:
+    
+        # ADICIONAR: car que estao na tabela shapefile mas nao estao na tabela car_input
+        insert_statement = """ 
+            insert into cbx.car_input (nr_car, cpf_cnpj, nome_proprietario, status, 
+            clients, 
+            sources, 
+            created_at, updated_at, created_by, updated_by)
+            select distinct 
+                shp.nr_car, shp.cpf_cnpj , '' as nome_proprietario, true as status, 
+                COALESCE(ci.clients::jsonb, '[]'::jsonb) || '[{"id_client": 1}]'::jsonb as clients, 
+                COALESCE(ci.sources::jsonb, '[]'::jsonb) || '[{"id_source": 6}]'::jsonb as sources,
+                current_timestamp, current_timestamp, 139, 139
+            from cbx.shapefile shp
+            left join cbx.car_input ci on shp.nr_car = ci.nr_car
+            where ci.nr_car is null; 
+        """
+        cur.execute(insert_statement)
 
+        # ATUALIZAR: car que estao na duas tabelas
+        update_statement = """
+            UPDATE cbx.car_input as ci SET 
+                sources = COALESCE(ci.sources::jsonb, '[]'::jsonb) || '[{"id_source": 6}]'::jsonb	
+            from cbx.shapefile as shp 
+            where ci.nr_car = shp.nr_car
+            and ci.sources::jsonb <> '[{"id_source": 6}]'
+        """            
+        cur.execute(update_statement)
+        
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e    
+    
+    cur.close()
     engine.dispose()
+    conn.close()        
     
     print('---------------------')
-    print('Upload SHAPEFILE ok!')
+    print(f'Upload SHAPEFILE ok! - {conn.dsn}')
     print('---------------------')
 
 if __name__ == "__main__":
