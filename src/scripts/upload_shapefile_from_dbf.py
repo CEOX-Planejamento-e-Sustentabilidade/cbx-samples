@@ -103,7 +103,7 @@ def main():
                 COALESCE(ci.sources::jsonb, '[]'::jsonb) || '[{"id_source": 6}]'::jsonb as sources,
                 current_timestamp, current_timestamp, 139, 139
             from cbx.shapefile shp
-            left join cbx.car_input ci on shp.nr_car = ci.nr_car
+            inner join cbx.car_input ci on shp.nr_car = ci.nr_car and shp.cpf_cnpj = ci.cpf_cnpj
             where ci.nr_car is null; 
         """
         cur.execute(insert_statement)
@@ -113,7 +113,7 @@ def main():
             UPDATE cbx.car_input as ci SET 
                 sources = COALESCE(ci.sources::jsonb, '[]'::jsonb) || '[{"id_source": 6}]'::jsonb	
             from cbx.shapefile as shp 
-            where ci.nr_car = shp.nr_car
+            where ci.nr_car = shp.nr_car and ci.cpf_cnpj = shp.cpf_cnpj
             and ci.sources::jsonb <> '[{"id_source": 6}]'
         """            
         cur.execute(update_statement)
