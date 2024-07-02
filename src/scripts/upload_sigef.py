@@ -114,7 +114,7 @@ def main():
                 COALESCE(ci.sources::jsonb, '[]'::jsonb) || '[{"id_source": 4}]'::jsonb,
                 current_timestamp, current_timestamp, 139, 139
             from cbx.sigef sg
-            left join cbx.car_input ci on sg.nr_car = ci.nr_car
+            inner join cbx.car_input ci on sg.nr_car = ci.nr_car and sg.cpf_cnpj = ci.cpf_cnpj
             where ci.nr_car is null    
         """
         cur.execute(insert_statement)
@@ -124,8 +124,8 @@ def main():
             update cbx.car_input as ci SET 
                 sources = COALESCE(ci.sources::jsonb, '[]'::jsonb) || '[{"id_source": 4}]'::jsonb
             from cbx.sigef as sg 
-            where ci.nr_car = sg.nr_car
-            and ci.sources::jsonb <> '[{"id_source": 4}]'    
+            where ci.nr_car = sg.nr_car and ci.cpf_cnpj = sg.cpf_cnpj
+            and ci.sources::jsonb <> '[{"id_source": 4}]'
         """
         cur.execute(update_statement)
         

@@ -24,3 +24,25 @@ def get_total_rows(cur, table):
 
 def insert_into_db(engine, df, table, schema='cbx', if_exis='append'):
     df.to_sql(table, engine, schema=schema, if_exists=if_exis, index=False)
+
+def format_like(field, values_arr):
+    likes = ""
+    for val in values_arr:
+        if val == "":
+            continue
+        if likes == "":
+            likes += f" ({field} like '%{val.lower()}%' "
+        else:
+            likes += f" or {field} like '%{val.lower()}%' "
+    return likes + ')' if likes != "" else ""
+
+def format_in(field, values_arr):
+    inn = ""
+    for index, val in enumerate(values_arr):
+        if val == "":
+            continue
+        if index == 0:
+            inn += f" {field} in ({val}"
+        else:
+            inn += f",{val}"
+    return inn + ')' if inn != "" else "" 
