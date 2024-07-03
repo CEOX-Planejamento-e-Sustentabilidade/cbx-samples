@@ -1,5 +1,20 @@
 import psycopg2
 
+def json_array(field, value):
+    json_arr_sql = f"jsonb_build_array(jsonb_build_object('{field}', {value})) "
+    return json_arr_sql
+    
+def json_client(client_id):
+    sql = json_array('id_client', client_id)
+    return sql
+
+def json_source(source_id):
+    sql = f"'{json_array('id_source', source_id)}'::jsonb"        
+    return sql
+
+#print(json_client(1))
+#print(json_source(1))
+
 def connect_to_db(prod = False):
     if prod:
         conn = psycopg2.connect(
