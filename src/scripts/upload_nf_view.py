@@ -3,16 +3,30 @@ from sqlalchemy import create_engine
 from util_database import *
 from util_format import *
 
+PROD = False
+
+def get_total_rows_to_chunky(cur):
+    cur.execute("""
+                SELECT COUNT(*) 
+                FROM cbx.nf nf
+                LEFT JOIN cbx.nf_view nfv ON nf.key_nf = nfv.key_nf
+                WHERE nfv.key_nf IS NULL
+                """)
+    return cur.fetchone()[0]
+
 # Function to process data in chunks
 def process_chunk(offset, chunk_size):
-    conn = connect_to_db()
+    conn = connect_to_db(prod=PROD)
     cur = conn.cursor()
     
-    query = f"""
-        SELECT content_json, key_nf,  
-        ie_emissor, ie_destinatario, cnpj_cpf_emissor, cnpj_cpf_destinatario, 
-        razao_social_emissor, razao_social_destinatario, client_id
-        FROM cbx.nf ORDER BY id LIMIT {chunk_size} OFFSET {offset}
+    query = f"""    
+        SELECT nf.content_json, nf.key_nf,
+        nf.ie_emissor, nf.ie_destinatario, nf.cnpj_cpf_emissor, nf.cnpj_cpf_destinatario,
+        nf.razao_social_emissor, nf.razao_social_destinatario, nf.client_id
+        FROM cbx.nf nf
+        LEFT JOIN cbx.nf_view nfv ON nf.key_nf = nfv.key_nf
+        WHERE nfv.key_nf IS NULL
+        ORDER BY nf.id LIMIT {chunk_size} OFFSET {offset}        
     """
     
     cur.execute(query)
@@ -89,15 +103,13 @@ def process_chunk(offset, chunk_size):
     return df
 
 def main():
-    conn = connect_to_db()
+    conn = connect_to_db(prod=PROD)
     cur = conn.cursor()
     
     engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
 
-    total_rows = get_total_rows(cur, 'cbx.nf')
-    chunk_size = 1000
-    cur.close()
-    conn.close()
+    total_rows = get_total_rows_to_chunky(cur)
+    chunk_size = 10000
 
     offsets = range(0, total_rows, chunk_size)
        
@@ -109,7 +121,10 @@ def main():
             print(f'Error inserting chunk: key-nf: {df["key_nf"]} nro: {df["nro_nota"]} erro: {ex.args}')
     print('---------------------')
     print('NFs inseridas na VIEW')
-    print('---------------------')                
+    print('---------------------')
+    
+    cur.close()
+    conn.close()
 
 if __name__ == "__main__":
     main()
