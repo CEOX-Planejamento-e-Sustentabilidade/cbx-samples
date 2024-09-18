@@ -10,5 +10,7 @@ src/scripts/de_para_PE
 src/scripts/de_para_PB
 src/scripts/de_para_teste
 src/scripts/ie
+src/scripts/aws
 
 *.pyc
+*.log
