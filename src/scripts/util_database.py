@@ -51,13 +51,13 @@ def format_like(field, values_arr):
             likes += f" or {field} like '%{val.lower()}%' "
     return likes + ')' if likes != "" else ""
 
-def format_in(field, values_arr):
+def format_in(field, values_arr, is_str = False):
     inn = ""
     for index, val in enumerate(values_arr):
         if val == "":
             continue
         if index == 0:
-            inn += f" {field} in ({val}"
+            inn += f" {field} in ('{val}'" if is_str else f" {field} in ({val}"
         else:
-            inn += f",{val}"
+            inn += f",'{val}'" if is_str else f",{val}"
     return inn + ')' if inn != "" else "" 
