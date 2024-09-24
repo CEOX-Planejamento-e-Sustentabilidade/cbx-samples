@@ -24,9 +24,20 @@ class UtilXml:
         files = [x for x in xml_folder]
         erros = []
         total_sucesso = 0
+        total_saved = 0
 
-        # Process files in chunks of 10,000
-        chunk_size_files = 10000
+        # Process files in chunks of 15,000
+        chunk_size_files = 15000
+        
+        # get all keys that are in database from the keys_nf        
+        con = connect_to_db(prod=True)
+        engine = create_engine('postgresql+psycopg2://', creator=lambda: con)
+        cur = con.cursor()
+        cur.execute(f"SELECT key_nf FROM cbx.nf")
+        rows = cur.fetchall()
+        df_rows = pd.DataFrame(rows, columns=['key_nf'])
+        keys_nf_bd = set(df_rows['key_nf'])
+        df_key_nf_bd = pd.DataFrame(keys_nf_bd, columns=['key_nf'])
 
         for i in range(0, len(files), chunk_size_files):
             nf = []
@@ -160,32 +171,26 @@ class UtilXml:
                 except Exception as ex:
                     print(f'Erro arquivo: {file.name}  {str(ex)}')
                 
-            df1 = pd.DataFrame(nf)
-            df2 = pd.DataFrame(nf_view)
-            chunk_size = 1000
-            
-            keys_nf = set(df1['key_nf'])
-            
-            con = connect_to_db(prod=False)
-            engine = create_engine('postgresql+psycopg2://', creator=lambda: con)
-            cur = con.cursor()
-            
-            # get all keys that are in database from the keys_nf        
-            try:
-                where = f" where {format_in('key_nf', keys_nf, True)}"
-                cur.execute(f"SELECT key_nf FROM cbx.nf {where}")
-                keys_nf_bd = cur.fetchall() 
-            except Exception as e:
-                print(f"Erro ao executar a consulta: {e}")
+            df1 = pd.DataFrame(nf)       
+            df2 = pd.DataFrame(nf_view)            
+            df1 = df1.drop_duplicates(subset=['key_nf']).reset_index(drop=True)
+            df2 = df2.drop_duplicates(subset=['key_nf']).reset_index(drop=True)
+                        
+            keys_nf = set(df1['key_nf'])                                   
             df_key_nf = pd.DataFrame(keys_nf, columns=['key_nf'])
-            df_key_nf_bd = pd.DataFrame(keys_nf_bd, columns=['key_nf'])
+            
             # get just the key_nfs that are not in the database
-            df_keys_bulk = df_key_nf.loc[~df_key_nf[['key_nf']].apply(tuple, axis=1).isin(df_key_nf_bd.apply(tuple, axis=1))]
+            df_keys_bulk = df_key_nf[~df_key_nf['key_nf'].isin(df_key_nf_bd['key_nf'])]
+            if not df_keys_bulk.empty:
+                df_key_nf_bd = pd.concat([df_key_nf_bd, df_keys_bulk], ignore_index=True)
+                df_key_nf_bd = df_key_nf_bd.drop_duplicates(subset=['key_nf']).reset_index(drop=True)
             
             # filter df1 and df2 to keep rows where 'key_nf' is in df_keys_bulk['key_nf']
             df1_final = df1[df1['key_nf'].isin(df_keys_bulk['key_nf'])]
-            df2_final = df2[df2['key_nf'].isin(df_keys_bulk['key_nf'])]
-                        
+            df2_final = df2[df2['key_nf'].isin(df_keys_bulk['key_nf'])]           
+            
+            chunk_size = 15000
+            total_saved += len(df1_final)           
             for start in range(0, max(len(df1_final), len(df2_final)), chunk_size):
                 df1_chunk = df1_final[start:start + chunk_size]
                 df2_chunk = df2_final[start:start + chunk_size]
@@ -206,4 +211,5 @@ class UtilXml:
                     erros.append(e.args)            
                     print(f"Error inserting nf-view by chunk: {e}")
                                 
-        return erros, total_sucesso, len(erros)
+        return erros, total_sucesso, total_saved, len(erros)
+    
