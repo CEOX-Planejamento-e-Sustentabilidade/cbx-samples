@@ -11,6 +11,7 @@ src/scripts/de_para_PB
 src/scripts/de_para_teste
 src/scripts/ie
 src/scripts/aws
+src/scripts/zip*
 
 *.pyc
 *.log
