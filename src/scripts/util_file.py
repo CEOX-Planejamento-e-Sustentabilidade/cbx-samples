@@ -8,7 +8,6 @@ from io import TextIOWrapper
 from pathlib import Path
 from os import makedirs
 from os.path import join
-from werkzeug.utils import secure_filename
 
 class UtilFile:
     ALLOWED_EXTENSIONS = {'txt', 'csv'}
@@ -34,7 +33,40 @@ class UtilFile:
         file_id = str(uuid.uuid1())
         name_file = f'{file.stem}-{file_id}'
         dir_path = self.create_dir_extract(name_file)
-        return dir_path        
+        return dir_path
+       
+    def open_zip(self, zip_path, path_to_extract, password):
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            if password != '':
+                zip_ref.setpassword (password.encode())
+            zip_ref.extractall(path_to_extract)        
+            
+    def extract_zip(self, zip_dir):
+        path = str(uuid.uuid4())
+        extract_dir = self.create_dir_extract(path)
+        for root, dirs, files in os.walk(zip_dir):
+            for file in files:
+                if file.endswith('.zip'):
+                    zip_file = os.path.join(root, file)
+                    self.extract_nested_zips(zip_file, extract_dir)
+        return extract_dir 
+    
+    def extract_nested_zips(self, zip_file, extract_dir):
+        """
+        Extract contents of nested zip files recursively.
+        
+        Parameters:
+        - zip_file: Path to the zip file to extract.
+        - extract_dir: Directory where contents will be extracted.
+        """
+        with zipfile.ZipFile(zip_file, 'r') as zf:            
+            zf.extractall(path=extract_dir)
+            print(f'Extracting {str(zip_file)}')
+            for file in zf.namelist():
+                if file.lower().endswith('.zip'):                    
+                    nested_zip_path = os.path.join(extract_dir, file)
+                    self.extract_nested_zips(nested_zip_path, extract_dir)
+            
 
     def transfer_files_with_extraction(self, local_folder):
         files = self.read_all_files(local_folder)
@@ -66,13 +98,7 @@ class UtilFile:
         # Move the file
         shutil.move(str(source), str(destination / source.name))
         print(f'Moved {source} to {destination / source.name}')    
-                
-    def open_zip(self, zip_path, path_to_extract, password):
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            if password != '':
-                zip_ref.setpassword (password.encode())
-            zip_ref.extractall(path_to_extract)
-        
+                                        
     def open_file(self, file, is_json = True):
         with open(file, 'r', encoding='utf-8-sig') as json_file:
             content_json = json_file.read()
