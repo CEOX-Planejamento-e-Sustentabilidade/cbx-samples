@@ -13,5 +13,7 @@ src/scripts/ie
 src/scripts/aws
 src/scripts/zip*
 
+uploads
+
 *.pyc
 *.log

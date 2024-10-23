@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import os
 import shutil
@@ -42,14 +43,17 @@ class UtilFile:
             zip_ref.extractall(path_to_extract)        
             
     def extract_zip(self, zip_dir):
-        path = str(uuid.uuid4())
-        extract_dir = self.create_dir_extract(path)
+        extract_paths = []
         for root, dirs, files in os.walk(zip_dir):
             for file in files:
                 if file.endswith('.zip'):
+                    filename = os.path.splitext(file)[0]
+                    path = f'{self.generate_filename(filename)}-{str(uuid.uuid4())}'
+                    extract_dir = self.create_dir_extract(path)
+                    extract_paths.append(extract_dir)                    
                     zip_file = os.path.join(root, file)
                     self.extract_nested_zips(zip_file, extract_dir)
-        return extract_dir 
+        return extract_paths
     
     def extract_nested_zips(self, zip_file, extract_dir):
         """
@@ -124,3 +128,8 @@ class UtilFile:
         text_stream = TextIOWrapper(file, encoding='utf-8-sig')
         content = text_stream.read()   
         return content
+    
+    def generate_filename(self, prefix='', ext=''):
+        now = datetime.now()
+        filename = f"{prefix+'-' if prefix else ''}{now.strftime('%Y-%m-%d-%H-%M-%S')}{f'.{ext}' if ext else ''}"
+        return filename    
