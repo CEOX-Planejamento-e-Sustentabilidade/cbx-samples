@@ -8,6 +8,8 @@ from pathlib import Path
 from util_database import connect_to_db, format_in
 
 class UtilXml:
+    PRODx = False
+    
     def remove_xml_header(self, xml_content):
         
         # Regular expression pattern to match XML declaration
@@ -30,7 +32,7 @@ class UtilXml:
         chunk_size_files = 15000
         
         # get all keys that are in database from the keys_nf        
-        con = connect_to_db(prod=True)
+        con = connect_to_db(prod=self.PRODx)
         engine = create_engine('postgresql+psycopg2://', creator=lambda: con)
         cur = con.cursor()
         cur.execute(f"SELECT key_nf FROM cbx.nf")
