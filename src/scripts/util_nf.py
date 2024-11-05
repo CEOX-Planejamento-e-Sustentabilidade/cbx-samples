@@ -280,7 +280,7 @@ class UtilNf:
                         erros.append({"arquivo": str(f), "exception": str(ex)})
                         total_erros += 1
                         pass
-
+                    
             df = pd.DataFrame(dados)
 
             # consultar NCMs

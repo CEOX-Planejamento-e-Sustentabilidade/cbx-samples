@@ -171,7 +171,9 @@ class UtilXml:
                                         'client_id': client_id            
                                     })                                
                 except Exception as ex:
-                    print(f'Erro arquivo: {file.name}  {str(ex)}')
+                    msg = f'Erro arquivo: {file.name}  {str(ex)}'
+                    print(msg)
+                    erros.append(msg)
                 
             df1 = pd.DataFrame(nf)       
             df2 = pd.DataFrame(nf_view)            
@@ -192,7 +194,7 @@ class UtilXml:
             df2_final = df2[df2['key_nf'].isin(df_keys_bulk['key_nf'])]           
             
             chunk_size = 15000
-            total_saved += len(df1_final)           
+            total_saved += len(df1_final)
             for start in range(0, max(len(df1_final), len(df2_final)), chunk_size):
                 df1_chunk = df1_final[start:start + chunk_size]
                 df2_chunk = df2_final[start:start + chunk_size]
@@ -212,6 +214,7 @@ class UtilXml:
                 except Exception as e:
                     erros.append(e.args)            
                     print(f"Error inserting nf-view by chunk: {e}")
-                                
-        return erros, total_sucesso, total_saved, len(erros)
+        
+        total_files = len(files)
+        return erros, total_files, total_sucesso, total_saved, len(erros)
     
