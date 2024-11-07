@@ -2,7 +2,7 @@ def format_person_doc(doc: str):
     # ex.: "13577891815.0" - remove .0
     if doc.endswith(".0"):
         doc = doc[:-2]     
-    # remove dots and hyphens
+    # remove dots and hyphens, ex.: 111.222.333-44 -> 11122233344
     new_doc = ''.join(filter(str.isdigit, str(doc)))
     return new_doc
         
