@@ -15,16 +15,14 @@ def get_ies():
         #BD: id|ie_value|cpf|cnpj|status|ie_status_text|properties|cpf_main|group_cbx|updated_at|clients|cbx_cod|s3_url|created_at|created_by|updated_by|sources|
         
         columns_to_be = {'id_grupo': 'cbx_cod',
-                         #'produtor': 'group_cbx',
-                         #'cpf_cnpj': 'cpf_main',
                          'ie': 'ie_value',
                          'situacao_ie': 'ie_status_text'}
         
         df.rename(columns=columns_to_be, inplace=True)
                
-        df['cpf'] = df.apply(lambda row: format_person_doc(row.cpf_cnpj) if verify_cpf_cnpj(row.cpf_cnpj) == 'CPF' else '', axis=1)
+        df['cpf'] = df.apply(lambda row: format_zero_left(row.cpf_cnpj) if verify_cpf_cnpj(row.cpf_cnpj) == 'CPF' else '', axis=1)
             
-        df['cnpj'] = df.apply(lambda row: format_person_doc(row.cpf_cnpj) if verify_cpf_cnpj(row.cpf_cnpj) == 'CNPJ' else '', axis=1)
+        df['cnpj'] = df.apply(lambda row: format_zero_left(row.cpf_cnpj) if verify_cpf_cnpj(row.cpf_cnpj) == 'CNPJ' else '', axis=1)
         
         df['status'] = True
         
@@ -55,25 +53,25 @@ def get_ies():
             'fantasia': f'{row.nome_fantasia}',
             'natureza': '',
             'telefone': '',
-            'municipio': str(row.municipio).replace('\n', '').replace("'", "''"),#f'{row.municipio}',
-            'logradouro': str(row.logradouro).replace('\n', '').replace("'", "''"), # f'{row.logradouro}',
+            'municipio': str(row.municipio).replace('\n', '').replace("'", "''"),
+            'logradouro': str(row.logradouro).replace('\n', '').replace("'", "''"),
             'complemento': '' if isinstance(row.complemento, float) and math.isnan(row.complemento) else str(row.complemento).replace('\n', ''),
             'arquivo_trello': '',
-            'nomeempresarial': str(row.nome_empresarial).replace('\n', ''), #f'{row.nome_empresarial}',
+            'nomeempresarial': str(row.nome_empresarial).replace('\n', ''),
             'simplenaciponal': '',
             'demaisatividades': '',
             'formadetributacao': '',
             'situacaocadastral': '',
-            'atividadeprincipal': str(row.descricao_atividade).replace('\n', ''), #f'{ row.descricao_atividade}',
+            'atividadeprincipal': str(row.descricao_atividade).replace('\n', ''),
             'data_inicio_atividade': f'{row.data_inicio_atividade}',
             'datasituacaocadastral': f'{row.data_situacao_cadastral}',
             'motivosituacaocadastral': ''            
             }), axis=1)       
         
-        columns_to_keep = ['cbx_cod', 'cpf', 'cnpj', #'group_cbx', 'cpf_main',
-                           'ie_value', 'ie_status_text', 'status', 'sources', 'clients',
-                           'created_at', 'updated_at', 'created_by', 'updated_by', 'properties']
-        df_subset = df[columns_to_keep]        
+        columns_to_keep = ['cbx_cod', 'cpf', 'cnpj', 'ie_value', 'ie_status_text',
+                           'status', 'sources', 'clients', 'created_at',
+                           'updated_at', 'created_by', 'updated_by', 'properties']
+        df_subset = df[columns_to_keep]
                 
         return df_subset
     
@@ -89,15 +87,16 @@ def get_update_sql(field_name, field_value, ie):
     formatted_sql = sql_statement.format(field_name=field_name, field_value=field_value, ie_value=ie)
     return formatted_sql
 
-def main():   
+def main():
     try:
-        df  = get_ies()
+        df = get_ies()
     except Exception as ex:            
         print(f'erro: {ex}')
         return
-    # mssql+pyodbc://
     
-    conn = connect_to_db(prod=False)    
+    prod=False
+    
+    conn = connect_to_db(prod)
     cur = conn.cursor()
     engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)    
         
@@ -108,7 +107,7 @@ def main():
             chunk = df[i:i+chunksize]
             ie = chunk['ie_value'].values[0]
             
-            cur.execute(f"SELECT COUNT(*) FROM cbx.ie where ie_value = '{ie}'")
+            cur.execute(f"SELECT COUNT(*) FROM cbx.ie where ie_value = {ie}")
             total = cur.fetchone()[0]
             if total == 0:
                 chunk.to_sql('ie', engine, schema='cbx', if_exists='append', index=False)
