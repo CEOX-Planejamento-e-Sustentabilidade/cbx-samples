@@ -13,7 +13,7 @@ def get_bd_ie():
             'cpf_principal': str
         }
         
-        df = pd.read_excel(xls, dtype=dtype_dict)        
+        df = pd.read_excel(xls, dtype=dtype_dict)
         
         #antes: cpf_principal, id_grupo, Grupo, produtor, cpf_cnpj
         #dpois: cpf_principal, cbx_cod, group_name, group_farmer, cpf_cnpj
