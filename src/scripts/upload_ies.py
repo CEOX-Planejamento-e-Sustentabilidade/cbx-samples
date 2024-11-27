@@ -104,17 +104,17 @@ def get_update_sql(field_name, field_value, ie):
     return formatted_sql
 
 def get_group_business(cur, cbx_cod, cpf_cnpj):
-    cur.execute(f"SELECT id, group_id_main FROM cbx.group_business WHERE cbx_cod = {cbx_cod} AND cpf_cnpj = '{cpf_cnpj}' LIMIT 1")
+    cur.execute(f"SELECT id, cbx_cod FROM cbx.group_business WHERE cbx_cod = {cbx_cod} AND cpf_cnpj = '{cpf_cnpj}' LIMIT 1")
     rows = cur.fetchall()
         
     data = []
     for row in rows:
         id = row[0]
-        id_main = row[1]
+        cbx_cod = row[1]
         
         data.append({
             'id': id,
-            'id_main': id_main
+            'cbx_cod': cbx_cod
         })
             
     return data[0]

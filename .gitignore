@@ -13,6 +13,7 @@ src/scripts/ie
 src/scripts/aws
 src/scripts/zip*
 src/scripts/bd_ie*
+src/scripts/xml*
 
 uploads
 
