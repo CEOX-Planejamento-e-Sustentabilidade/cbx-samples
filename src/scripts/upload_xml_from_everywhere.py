@@ -7,8 +7,8 @@ from util_file import UtilFile
 from util_xml import UtilXml
 
 PRODx = False
-LOCAL_FOLDER='src/scripts/zip_matheus'
-LOCAL_FOLDER_EXTRACT='src/scripts/zip_matheus/xml'
+LOCAL_FOLDER='src/scripts/xmls'
+LOCAL_FOLDER_EXTRACT='src/scripts/xmls'
 
 def create_local_folders():
     if not os.path.exists(LOCAL_FOLDER):
@@ -64,9 +64,12 @@ def processar_nfs_insumos_from_paths(xml_paths: list):
 
 if __name__ == "__main__":
     PRODx = False
-    create_local_folders()
+    #create_local_folders()
     #download_folder_from_s3
-    paths = extract_files()
-    save_xml_database()    
-    processar_nfs_insumos_from_paths(paths)    
+    #paths = extract_files()
+    #save_xml_database()    
+    #processar_nfs_insumos_from_paths(paths)    
+    paths = [LOCAL_FOLDER]
+    processar_nfs_insumos_from_paths(paths)
+    save_xml_database()
     

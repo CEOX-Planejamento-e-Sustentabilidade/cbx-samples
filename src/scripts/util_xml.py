@@ -178,7 +178,7 @@ class UtilXml:
             df1 = pd.DataFrame(nf)       
             df2 = pd.DataFrame(nf_view)            
             df1 = df1.drop_duplicates(subset=['key_nf']).reset_index(drop=True)
-            df2 = df2.drop_duplicates(subset=['key_nf']).reset_index(drop=True)
+            #df2 = df2.drop_duplicates(subset=['key_nf']).reset_index(drop=True)
                         
             keys_nf = set(df1['key_nf'])                                   
             df_key_nf = pd.DataFrame(keys_nf, columns=['key_nf'])

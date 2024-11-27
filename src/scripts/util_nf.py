@@ -54,6 +54,25 @@ class UtilNf:
 
         return cleaned_content
 
+    def safe_get(self, d, keys, default=None):
+        """
+        Safely get a value from a nested dictionary.
+
+        Args:
+            d (dict): The dictionary to retrieve the value from.
+            keys (list): A list of keys representing the nested path.
+            default: The value to return if any key is missing.
+
+        Returns:
+            The value at the nested key path, or default if the path is invalid.
+        """
+        for key in keys:
+            if isinstance(d, dict) and key in d:
+                d = d[key]
+            else:
+                return default
+        return d
+
     def parser_nf_insumos(self, dados, xml_path):
         try:
             with open(xml_path, encoding='utf-8-sig') as arquivo:
@@ -94,46 +113,71 @@ class UtilNf:
                     # .replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "")
                     # .replace("<?xml version=\"1.0\"?>", ""))
 
-                NATOP = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["natOp"]
+                NATOP = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "ide", "natOp"])
+                tpNF = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "ide", "tpNF"])
+                CHAVE = self.safe_get(doc, ["nfeProc", "protNFe", "infProt", "chNFe"])
+                nNF = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "ide", "nNF"])
+                DATA_EMISSAO = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "ide", "dhEmi"])
 
-                tpNF = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["tpNF"]
+                CNPJ = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "emit", "CNPJ"])
+                IE = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "emit", "IE"])
+                CPF = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "emit", "CPF"])
+                NOME = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "emit", "xNome"])
+                FANTASIA = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "emit", "xFant"])
 
-                CHAVE = doc["nfeProc"]["protNFe"]["infProt"]["chNFe"]
+                DEST_CPF_CNPJ = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "dest", "CNPJ"]) or \
+                                self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "dest", "CPF"])
+                DEST_NOME = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "dest", "xNome"])
+                DEST_IE = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "dest", "IE"])
 
-                nNF = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["nNF"]
-                DATA_EMISSAO = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["dhEmi"]
+                infAdFisco = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "infAdic", "infAdFisco"])
+                info_adicionais = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "infAdic", "infCpl"])
 
-                if "CNPJ" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
-                    CNPJ = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["CNPJ"]
-                if "IE" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
-                    IE = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["IE"]
-                if "CPF" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
-                    CPF = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["CPF"]
-                if "xNome" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
-                    NOME = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["xNome"]
-                if "xFant" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
-                    FANTASIA = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["xFant"]
-                if "CNPJ" in doc["nfeProc"]["NFe"]["infNFe"]["dest"]:
-                    DEST_CPF_CNPJ = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["CNPJ"]
-                    DEST_NOME = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["xNome"]
-                if "IE" in doc["nfeProc"]["NFe"]["infNFe"]["dest"]:
-                    DEST_IE = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["IE"]
-                if "CPF" in doc["nfeProc"]["NFe"]["infNFe"]["dest"]:
-                    DEST_CPF_CNPJ = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["CPF"]
-                    DEST_NOME = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["xNome"]
+                PLACA = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "transp", "veicTransp", "placa"])
+                UF = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "transp", "veicTransp", "UF"])
 
-                if "infAdic" in doc["nfeProc"]["NFe"]["infNFe"]:
-                    if "infAdFisco" in doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]:
-                        infAdFisco = doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]["infAdFisco"]
-                    if "infCpl" in doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]:
-                        info_adicionais = doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]["infCpl"]
+                itens = self.safe_get(doc, ["nfeProc", "NFe", "infNFe", "det"])
+                
+                # NATOP = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["natOp"]
 
-                if "veicTransp" in doc["nfeProc"]["NFe"]["infNFe"]["transp"]:
-                    PLACA = doc["nfeProc"]["NFe"]["infNFe"]["transp"]["veicTransp"]["placa"]
-                    if 'UF' in doc["nfeProc"]["NFe"]["infNFe"]["transp"]["veicTransp"]:
-                        UF = doc["nfeProc"]["NFe"]["infNFe"]["transp"]["veicTransp"]["UF"]
+                # tpNF = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["tpNF"]
 
-                itens = doc["nfeProc"]["NFe"]["infNFe"]["det"]
+                # CHAVE = doc["nfeProc"]["protNFe"]["infProt"]["chNFe"]
+
+                # nNF = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["nNF"]
+                # DATA_EMISSAO = doc["nfeProc"]["NFe"]["infNFe"]["ide"]["dhEmi"]
+
+                # if "CNPJ" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
+                #     CNPJ = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["CNPJ"]
+                # if "IE" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
+                #     IE = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["IE"]
+                # if "CPF" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
+                #     CPF = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["CPF"]
+                # if "xNome" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
+                #     NOME = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["xNome"]
+                # if "xFant" in doc["nfeProc"]["NFe"]["infNFe"]["emit"]:
+                #     FANTASIA = doc["nfeProc"]["NFe"]["infNFe"]["emit"]["xFant"]
+                # if "CNPJ" in doc["nfeProc"]["NFe"]["infNFe"]["dest"]:
+                #     DEST_CPF_CNPJ = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["CNPJ"]
+                #     DEST_NOME = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["xNome"]
+                # if "IE" in doc["nfeProc"]["NFe"]["infNFe"]["dest"]:
+                #     DEST_IE = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["IE"]
+                # if "CPF" in doc["nfeProc"]["NFe"]["infNFe"]["dest"]:
+                #     DEST_CPF_CNPJ = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["CPF"]
+                #     DEST_NOME = doc["nfeProc"]["NFe"]["infNFe"]["dest"]["xNome"]
+
+                # if "infAdic" in doc["nfeProc"]["NFe"]["infNFe"]:
+                #     if "infAdFisco" in doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]:
+                #         infAdFisco = doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]["infAdFisco"]
+                #     if "infCpl" in doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]:
+                #         info_adicionais = doc["nfeProc"]["NFe"]["infNFe"]["infAdic"]["infCpl"]
+
+                # if "veicTransp" in doc["nfeProc"]["NFe"]["infNFe"]["transp"]:
+                #     PLACA = doc["nfeProc"]["NFe"]["infNFe"]["transp"]["veicTransp"]["placa"]
+                #     if 'UF' in doc["nfeProc"]["NFe"]["infNFe"]["transp"]["veicTransp"]:
+                #         UF = doc["nfeProc"]["NFe"]["infNFe"]["transp"]["veicTransp"]["UF"]
+
+                # itens = doc["nfeProc"]["NFe"]["infNFe"]["det"]
 
                 verifica_lista = isinstance(itens, list)
 
