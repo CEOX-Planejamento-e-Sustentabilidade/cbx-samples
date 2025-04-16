@@ -1,0 +1,27 @@
+s3:
+  access_key: "AKIARUFQOA2GQD7UITUT"
+  secret_key: "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"
+  region_name: "sa-east-1"
+  bucket_name: "cbx-plataforma"
+  wait_time_seconds: 10
+
+sqs:
+  sqs_processamento_renovabio: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio.fifo"
+  sqs_processamento_renovabio_dlq: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio-dlq.fifo"
+
+api:
+  jwt_secret: "elvWTMVhPyuQH76otMUx8k5krvRZ88"
+  jwt_auth_header_prefix: "Bearer"
+  url: "https://plataforma-api.cbxsustentabilidade.com.br"
+
+user:
+  email: "ti@cbxsustentabilidade.com.br"
+  pass: "T1c3Ox@t3@m"
+
+database:
+  pg_user: "postgres"
+  pg_password: "84iuPbpQnCF5vze"
+  pg_database: "cbx_prd"
+  pg_host: "plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com"
+  pg_port: "5432"  
+  sqlalchemy_database_uri: "postgresql://postgres:84iuPbpQnCF5vze@plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com:5432/cbx_prd"

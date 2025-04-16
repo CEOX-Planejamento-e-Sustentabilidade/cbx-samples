@@ -1,0 +1,27 @@
+s3:
+  access_key: "AKIARUFQOA2GQD7UITUT"
+  secret_key: "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"
+  region_name: "sa-east-1"
+  bucket_name: "cbx-plataforma"
+  wait_time_seconds: 10
+
+sqs:
+  sqs_processamento_renovabio: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio.fifo"
+  sqs_processamento_renovabio_dlq: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio-dlq.fifo"
+
+api:
+  jwt_secret: "elvWTMVhPyuQH76otMUx8k5krvRZ88"
+  jwt_auth_header_prefix: "Bearer"
+  url: "http://localhost:5000"
+
+user:
+  email: "edzatarin@gmail.com"
+  pass: "fyndqyfz"
+
+database:
+  pg_user: "postgres"
+  pg_password: "local123"
+  pg_database: "cbx_dev"
+  pg_host: "localhost"
+  pg_port: "5432"
+  sqlalchemy_database_uri: "postgresql://postgres:local123@localhost:5432/cbx_dev"
