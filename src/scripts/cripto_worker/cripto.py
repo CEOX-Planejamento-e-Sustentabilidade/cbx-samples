@@ -15,3 +15,7 @@ def encript(yaml_name, encrypted_name):
 
 encript("src/scripts/cripto_worker/config.dev.yaml", "src/scripts/cripto_worker/config.dev.enc")
 encript("src/scripts/cripto_worker/config.prod.yaml", "src/scripts/cripto_worker/config.prod.enc")
+
+# ultima criacao
+#Chave secreta src/scripts/cripto_worker/config.dev.yaml: WV2XngZoEOZRvfDT_DKXwZYlZRLaqwdh00NdgN_e5vE=
+#Chave secreta src/scripts/cripto_worker/config.prod.yaml: ImCszQ-84m5JyVF6OH7Gvx-7vqgijIwVArc7yiTY5hU=
