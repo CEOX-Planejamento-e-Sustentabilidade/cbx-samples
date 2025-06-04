@@ -6,8 +6,8 @@ s3:
   wait_time_seconds: 10
 
 sqs:
-  sqs_processamento_renovabio: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio-dev"
-  sqs_processamento_renovabio_dlq: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio-dev"
+  sqs_processamento_renovabio: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio-dev.fifo"
+  sqs_processamento_renovabio_dlq: "https://sqs.sa-east-1.amazonaws.com/112039167629/cbx-ceox-processamento-renovabio-dev.fifo"
 
 api:
   jwt_secret: "elvWTMVhPyuQH76otMUx8k5krvRZ88"
