@@ -32,4 +32,5 @@ def decode():
 #reset_password('nadi@2025')
 #reset_password('gabr@2025')
 # matheus@ceoxplan.onmicrosoft.com
-reset_password('rxftkdspok') #ce91562991917dfb722b5f2c8b43a45eb18b8dbf5a00b979c544fda8c35e7d87
+#reset_password('rxftkdspok') #ce91562991917dfb722b5f2c8b43a45eb18b8dbf5a00b979c544fda8c35e7d87
+reset_password('edmar_z') #ce91562991917dfb722b5f2c8b43a45eb18b8dbf5a00b979c544fda8c35e7d87
