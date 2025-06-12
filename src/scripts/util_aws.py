@@ -33,4 +33,3 @@ class UtilAws:
                     print(f'Nenhum arquivo encontrado em {S3_FOLDER}')
         print('--------------------------------------')
         print(f'Download Complete!')
-        print('--------------------------------------')

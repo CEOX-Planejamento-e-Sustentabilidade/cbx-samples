@@ -6,15 +6,10 @@ from config import JWT_SECRET
 from hashlib import sha256
 
 def encrypt_password(password):    
-
-
-
-
     return sha256(password.encode('utf-8')).hexdigest()
 
 def reset_password(new_pass):
     try:
-        #new_pass = 'cri$2025'
         encrypt_pass = encrypt_password(new_pass)
         print(f'pass: {new_pass} - encrypt_pass: {encrypt_pass}')
     except Exception as e:

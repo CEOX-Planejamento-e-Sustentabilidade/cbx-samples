@@ -1,17 +1,21 @@
 import json
 import os
 import boto3
-from functools import lru_cache
 
-@lru_cache()
 def get_secrets():
     client = boto3.client("secretsmanager")
     response = client.get_secret_value(SecretId='cbx-plataforma-cripto')
     secret_string = response["SecretString"]
     return json.loads(secret_string)
 
-def get(key_suffix, default=None):    
-    key = f"/cbx/{ENVIRONMENT}/{key_suffix}"
+def get(key_suffix, default=None):        
+    if ENVIRONMENT.lower() in ('dev', 'development'):
+        env = 'dev'
+    elif ENVIRONMENT.lower() in ('prod', 'production'):
+        env = 'prod'
+    else:
+        raise ValueError(f"Ambiente inválido: {ENVIRONMENT}")
+    key = f"/cbx/{env}/{key_suffix}"
     return secrets.get(key, default)
 
 secrets = get_secrets()
@@ -19,7 +23,8 @@ secrets = get_secrets()
 # environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "dev") #dev ou prod
 DEBUG = ENVIRONMENT == "dev"
-URL_PLATFORM = 'https://fs.cbxsustentabilidade.com.br'
+
+URL_PLATFORM = get('environment/url_platform')
 
 # sintegra
 TOKEN_SINTEGRAWS = get('sintegra/token')
@@ -44,8 +49,8 @@ SHAREPOINT_KEY_PATH = 'src/certificate_keys/sharepoint/key.pem'
 # api
 JWT_SECRET = get('api/jwt_secret')
 JWT_AUTH_HEADER_PREFIX = get('api/jwt_auth_header_prefix')
+API_URL = get('api/url')
 ROOT_UPLOAD_FOLDER = 'uploads'
-API_URL = 'http://localhost:5000'
 EMAIL_FROM = get('user/email')
 
 # user
@@ -72,3 +77,12 @@ INFOSIMPLES_HTTPX_TIMEOUT = get('infosimples/httpx/timeout')
 INFOSIMPLES_CALLBACK_URL = get('infosimples/call_back_url')
 INFOSIMPLES_CALLBACK_SECRET = get('infosimples/call_back_secret')
 INFOSIMPLES_URL_SHOW = get('infosimples/url_show')
+
+# sharepoint
+SHAREPOINT_SCOPES = get('sharepoint/scopes_sharepoint_online')
+SHAREPOINT_BASE_URL = get('sharepoint/sharepoint_base_url')
+SHAREPOINT_FOLDER_URL = get('sharepoint/folder_url')
+SHAREPOINT_CLIENT_ID = get('sharepoint/client_id')
+SHAREPOINT_SECRET_VALUE = get('sharepoint/secret_value')
+SHAREPOINT_TENANT_ID = get('sharepoint/tenant_id')
+SHAREPOINT_CERT_THUMBPRINT = get('sharepoint/cert_thumbprint')
