@@ -1,13 +1,15 @@
-from hashlib import sha256
+
 import json
 
 import jwt
+from config import JWT_SECRET
+from hashlib import sha256
 
-JWT_SECRET='elvWTMVhPyuQH76otMUx8k5krvRZ88'
-JWT_AUTH_HEADER_PREFIX='Bearer'
+def encrypt_password(password):    
 
-def encrypt_password(password):
-    
+
+
+
     return sha256(password.encode('utf-8')).hexdigest()
 
 def reset_password(new_pass):
