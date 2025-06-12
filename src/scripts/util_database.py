@@ -1,4 +1,5 @@
 import psycopg2
+from config import *
 
 def json_array(field, value):
     json_arr_sql = f"jsonb_build_array(jsonb_build_object('{field}', {value})) "
@@ -12,26 +13,14 @@ def json_source(source_id):
     sql = f"'{json_array('id_source', source_id)}'::jsonb"        
     return sql
 
-#print(json_client(1))
-#print(json_source(1))
-
 def connect_to_db(prod = False):
-    if prod:
-        conn = psycopg2.connect(
-            host="plataforma.cfjbmj8sxs2z.sa-east-1.rds.amazonaws.com",
-            database="cbx_prd",
-            user="postgres",
-            password="84iuPbpQnCF5vze"
-        )
-        return conn
-    else:
-        conn = psycopg2.connect(
-            host="localhost",
-            database="cbx_dev",
-            user="postgres",
-            password="local123"
-        )
-        return conn
+    conn = psycopg2.connect(
+        host=PG_HOST,
+        database=PG_DATABASE,
+        user=PG_USER,
+        password=PG_PASSWORD
+    )
+    return conn
 
 def get_total_rows(cur, table):
     cur.execute(f"SELECT COUNT(*) FROM {table}")
